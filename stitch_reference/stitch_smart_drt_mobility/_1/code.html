@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cargo Delivery Tracking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#001452",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-surface-variant": "#434656",
+                    "on-surface": "#0b1c30",
+                    "on-secondary-fixed": "#191c1e",
+                    "primary": "#003ec7",
+                    "outline": "#737688",
+                    "primary-container": "#0052ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#5e667d",
+                    "surface-container-high": "#dce9ff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary": "#5c5f61",
+                    "on-tertiary-fixed": "#131b2e",
+                    "surface-tint": "#004ced",
+                    "primary-fixed": "#dde1ff",
+                    "tertiary-fixed": "#dae2fd",
+                    "surface-container-low": "#eff4ff",
+                    "error": "#ba1a1a",
+                    "tertiary": "#464e64",
+                    "surface-dim": "#cbdbf5",
+                    "on-background": "#0b1c30",
+                    "surface-container": "#e5eeff",
+                    "on-secondary-container": "#626567",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c3c5d9",
+                    "surface": "#f8f9ff",
+                    "secondary-fixed-dim": "#c4c7c9",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-primary-fixed-variant": "#0038b6",
+                    "on-primary-container": "#dfe3ff",
+                    "on-tertiary-container": "#dde4ff",
+                    "inverse-primary": "#b7c4ff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#b7c4ff",
+                    "secondary-container": "#e0e3e5",
+                    "on-secondary-fixed-variant": "#444749",
+                    "secondary-fixed": "#e0e3e5",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "inverse-surface": "#213145",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "on-error-container": "#93000a",
+                    "background": "#f8f9ff",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "stack-sm": "8px",
+                    "container-margin": "20px",
+                    "stack-md": "16px",
+                    "stack-lg": "24px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Inter"
+                    ],
+                    "headline-sm": [
+                            "Inter"
+                    ],
+                    "label-md": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "data-mono": [
+                            "JetBrains Mono"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "data-mono": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md text-body-md h-full flex flex-col antialiased">
+<!-- TopAppBar (Transactional - Hidden Navigation Shells as per instructions, but keeping an app bar for context) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface shadow-sm">
+<button class="text-primary hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="text-headline-sm font-headline-sm text-primary font-bold">Track Cargo</h1>
+<div class="w-10"></div> <!-- Placeholder for balance -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col pt-16 h-full relative">
+<!-- Map Area -->
+<div class="flex-1 relative bg-surface-container-low overflow-hidden">
+<img alt="Map view" class="absolute inset-0 w-full h-full object-cover opacity-80" data-location="Metropolis" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWLHvoEA6b9beiHzzRqTfXeqmYSu27hbctgStCHhqxQVYtQ3uszQEn9hf6v8OKYzw5UGVMg49n6pt8oQ_QX2Za9uqLHBzQcASsW-ciKqt3-DxDdJwmVLksGU6rXDevS0ZbeSlXaEvRNhadJZU9UsmvvW9RxpdFQVTPTCTA0fS5Cr9WoJieStM3BGJiZLWx8WGsP4dJKLfjZArBEJIDewqtcut4YL2uGudu4jxFO43S-X_A8tVTxLvppY1yFh8i_lxIWlSDeA85s9I"/>
+<!-- Route Line Overlay (Simulated) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+<path class="animate-[dash_1s_linear_infinite]" d="M 100 150 Q 200 200 150 400 T 300 600" fill="transparent" id="route-path" stroke="#0052ff" stroke-dasharray="8 8" stroke-width="4" style="stroke-dasharray: 8, 8; stroke-dashoffset: 0;"></path>
+</svg>
+<!-- Vehicle Marker -->
+<div class="absolute top-[40%] left-[45%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+<div class="bg-primary-container text-on-primary rounded-full p-2 shadow-lg animate-bounce">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<div class="bg-surface text-on-surface text-label-md font-label-md px-2 py-1 rounded shadow-sm mt-1">
+                    Arriving in 12 min
+                </div>
+</div>
+<!-- Origin Marker -->
+<div class="absolute top-[15%] left-[25%] transform -translate-x-1/2 -translate-y-1/2 z-10">
+<div class="bg-surface border-2 border-primary w-4 h-4 rounded-full shadow-sm"></div>
+</div>
+<!-- Destination Marker -->
+<div class="absolute top-[65%] left-[75%] transform -translate-x-1/2 -translate-y-1/2 z-10">
+<div class="bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+</div>
+</div>
+</div>
+<!-- Non-Modal Bottom Sheet (Booking Configuration / Status) -->
+<div class="bg-surface rounded-t-xl shadow-[0_-4px_20px_0_rgba(0,0,0,0.04)] px-container-margin py-stack-lg z-20 relative -mt-4">
+<!-- Handle -->
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto mb-stack-md"></div>
+<!-- Status Bar -->
+<div class="flex justify-between items-center mb-stack-lg">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">In Transit</h2>
+</div>
+<span class="text-data-mono font-data-mono text-secondary">#CRG-8924</span>
+</div>
+<!-- Progress Track -->
+<div class="relative w-full h-2 bg-surface-container rounded-full mb-stack-lg">
+<div class="absolute top-0 left-0 h-full bg-primary-container rounded-full" style="width: 60%;"></div>
+<!-- Nodes -->
+<div class="absolute top-1/2 left-0 transform -translate-y-1/2 w-4 h-4 rounded-full bg-primary border-2 border-surface"></div>
+<div class="absolute top-1/2 left-[60%] transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary border-2 border-surface shadow-[0_0_0_4px_rgba(0,82,255,0.2)]"></div>
+<div class="absolute top-1/2 right-0 transform -translate-y-1/2 w-4 h-4 rounded-full bg-surface-container border-2 border-surface"></div>
+</div>
+<div class="flex justify-between text-label-md font-label-md text-secondary mb-stack-lg">
+<span>Picked Up<br/>10:45 AM</span>
+<span class="text-right">Est. Delivery<br/>11:30 AM</span>
+</div>
+<hr class="border-outline-variant opacity-50 mb-stack-md"/>
+<!-- Delivery Details Card -->
+<div class="bg-surface-container-low rounded-lg p-stack-md mb-stack-lg flex items-center gap-4">
+<div class="bg-tertiary-container text-on-tertiary-container p-3 rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div class="flex-1">
+<h3 class="text-body-md font-body-md text-on-surface font-semibold">Industrial Generator Parts</h3>
+<p class="text-label-md font-label-md text-secondary">2 Pallets • 450 kg</p>
+</div>
+</div>
+<!-- Courier Info -->
+<div class="flex items-center justify-between mb-stack-lg">
+<div class="flex items-center gap-3">
+<img alt="Driver Profile" class="w-12 h-12 rounded-full object-cover border-2 border-surface-container-high" data-alt="A professional headshot of a delivery driver wearing a dark blue uniform cap and jacket. The lighting is bright and even, set against a neutral light grey background. The driver has a friendly but focused expression, fitting a corporate modern aesthetic. High quality, crisp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3y2HwZrMGec4jOf25_uloGEm_oHhKyU2_vvNVsZXrDL9w_RPR7dZaUBNh2EV_Bgn5VZ-pA-vN6nfZh7PheDHmutFicj7XKtGc-63llWspT5ED995gVrBtH_kiBrnxghhR3oif0piL1fYcShJnCRQjQh4yNg5mlGrSyYqU-LjP5uceck7AMy0MDAbPpLfTjm4QW9dXL1sf9-sQeCVCYenBOg4QbShPlctK234GxIdupgl2uyfJh86pDHrnYVHvqFj2vYE3D-SoQAM"/>
+<div>
+<h4 class="text-body-md font-body-md text-on-surface font-semibold">Marcus T.</h4>
+<p class="text-label-md font-label-md text-secondary">Ford Transit • LPN-293</p>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-1 rounded text-label-md font-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-[#eab308]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    4.9
+                </div>
+</div>
+<!-- Actions -->
+<div class="flex gap-gutter mt-auto pb-stack-md">
+<button class="flex-1 bg-surface-container-high text-on-surface text-body-md font-body-md py-3 rounded-lg font-medium flex justify-center items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+                    Receipt
+                </button>
+<button class="flex-[2] bg-primary-container text-on-primary text-body-md font-body-md py-3 rounded-lg font-semibold flex justify-center items-center gap-2 shadow-lg shadow-primary-container/20 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">call</span>
+                    Call Courier
+                </button>
+</div>
+</div>
+</main>
+<style>
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -16;
+            }
+        }
+    </style>
+</body></html>

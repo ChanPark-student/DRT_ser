@@ -1,0 +1,31 @@
+/* DRT 판정 모듈 - 전역 스타일 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f8f9ff;
+  --surface: #ffffff;
+  --surface2: #f4f6fa;
+  --border: #e0e3e5;
+  --accent: #0052ff;
+  --accent2: #3fb950;
+  --warn: #d32f2f;
+  --yellow: #f57c00;
+  --text: #0b1c30;
+  --muted: #5c5f61;
+  --radius: 12px;
+  --shadow: 0 4px 16px rgba(0, 82, 255, 0.06);
+}
+
+html, body, #root { height: 100%; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+select {
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(0, 82, 255, 0.2);
+}

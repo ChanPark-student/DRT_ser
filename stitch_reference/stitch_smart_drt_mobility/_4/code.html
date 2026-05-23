@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Available Routes - DRT Connect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#dde4ff",
+                        "tertiary-container": "#5e667d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#626567",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "surface-bright": "#f8f9ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#eff4ff",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed": "#e0e3e5",
+                        "on-tertiary-fixed": "#131b2e",
+                        "inverse-primary": "#b7c4ff",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "surface-container-highest": "#d3e4fe",
+                        "outline": "#737688",
+                        "on-secondary-fixed": "#191c1e",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "outline-variant": "#c3c5d9",
+                        "on-primary-fixed": "#001452",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary": "#5c5f61",
+                        "secondary-container": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#dde1ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "on-secondary-fixed-variant": "#444749",
+                        "surface-variant": "#d3e4fe",
+                        "surface-tint": "#004ced",
+                        "surface": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#0052ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#434656",
+                        "inverse-surface": "#213145",
+                        "tertiary": "#464e64",
+                        "on-primary-fixed-variant": "#0038b6",
+                        "tertiary-fixed": "#dae2fd",
+                        "on-background": "#0b1c30",
+                        "on-primary-container": "#dfe3ff",
+                        "surface-container-high": "#dce9ff",
+                        "primary": "#003ec7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "20px",
+                        "unit": "4px",
+                        "stack-lg": "24px",
+                        "gutter": "16px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm docked full-width top-0 fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16">
+<button class="text-primary hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-headline-sm font-headline-md font-bold text-primary">DRT Connect</h1>
+<button class="text-primary hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-[80px] pb-[100px] px-container-margin">
+<!-- Search Context Header -->
+<div class="mb-stack-lg bg-surface-container-low rounded-xl p-4 shadow-sm border border-outline-variant/30 flex items-center gap-4">
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-8">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">trip_origin</span>
+<div class="h-4 w-0.5 bg-outline-variant my-1"></div>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div class="flex-grow">
+<div class="text-body-md font-body-md text-secondary mb-1">Central Station</div>
+<div class="h-px bg-outline-variant/50 w-full my-2"></div>
+<div class="text-body-md font-body-md text-on-surface font-semibold">Tech Park Campus</div>
+</div>
+</div>
+<h2 class="text-headline-sm font-headline-sm text-on-background mb-stack-md">Available Routes</h2>
+<!-- Route List -->
+<div class="space-y-stack-md">
+<!-- Route Card 1 (Recommended) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_0_rgba(0,0,0,0.04)] border border-primary-container/20 overflow-hidden relative">
+<div class="absolute top-0 right-0 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-lg z-10">Fastest</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary-container/10 text-primary-container rounded-lg p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<div class="text-headline-md font-headline-md text-on-surface">15 min</div>
+<div class="text-label-md font-label-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">directions_walk</span> 3 min walk
+                                </div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-data-mono font-data-mono text-on-surface font-bold text-lg">1,200 KRW</div>
+<div class="text-label-md font-label-md text-primary font-semibold">Arriving in 4 min</div>
+</div>
+</div>
+<div class="bg-surface-bright rounded-lg p-3 mb-4 flex items-center gap-3">
+<img alt="DRT Vehicle" class="w-12 h-12 rounded object-cover" data-alt="A modern, sleek electric minibus designed for demand-responsive transport, waiting at a clean urban bus stop. The vehicle is painted in a crisp white and vibrant primary blue livery, reflecting the app's branding. The setting is bright and sunny, highlighting the dependable and energetic mood of the public transit system. The overall aesthetic is clean, corporate, and modern, emphasizing efficiency and high-contrast visibility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6E4Jj99kLF7p5Cx7AAchHUVbNfUXaHpabLLhtI4PnfOctryxchSrQBnmq0qjT4RkIE936o2slwmX8vcNEx3hhNJncPelf6LCdGFyxcfZB2HBTW5eeoXyz71oshrAZxbqUskWeTyg6kXl3v4SV0TNqAj2mbymO340vFMBL671hEl7CU02V-zsBeQIXPk-btiMtGN5qG_R0_RDiv9Zg8TpQfWVuFU0098uYRhbTUA5vffpJa9R_IdBEtG5Rc5e-3tj9VOFO2UhyNcQ"/>
+<div>
+<div class="text-label-md font-label-md text-on-surface font-semibold">Shuttle A-12</div>
+<div class="text-label-md font-label-md text-secondary">License: 12가 3456</div>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary text-label-md font-label-md font-semibold py-3 rounded-lg hover:opacity-90 transition-opacity flex justify-center items-center gap-2">
+                        Book Now <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Route Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_0_rgba(0,0,0,0.04)] border border-outline-variant/30 overflow-hidden relative">
+<div class="p-5">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="bg-tertiary-container/10 text-tertiary-container rounded-lg p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<div class="text-headline-md font-headline-md text-on-surface">22 min</div>
+<div class="text-label-md font-label-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">directions_walk</span> 1 min walk
+                                </div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-data-mono font-data-mono text-on-surface font-bold text-lg">1,200 KRW</div>
+<div class="text-label-md font-label-md text-tertiary font-semibold">Arriving in 8 min</div>
+</div>
+</div>
+<div class="bg-surface-bright rounded-lg p-3 mb-4 flex items-center gap-3">
+<img alt="DRT Vehicle" class="w-12 h-12 rounded object-cover" data-alt="A modern transit van parked on a well-lit city street, ready for passenger boarding. The vehicle features a subtle slate and blue color scheme, aligning with the DRT Connect brand identity. The lighting is bright, clear daylight, casting soft shadows that enhance the geometric forms of the van. The scene conveys a sense of calm efficiency and reliable public transport in a modern urban environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXKMnWXPfBbfXQBuq4FhgF2NpfjE9-O2KqCA9PLgTxyppc797BLoeuPGnUHZ1BIhOwweS1Qrz-sl8s2THr9fsJryQFMz4x7ExtyGs3ehB61MxkFylGalL4oxIQvzlosnyeiXKhvC-87jSGoNZHwF03Xl0DCfFSpwyxlDXQoPK9pvmg52ANqj8p4Hbvqb5_BFzOfxPhbBzS_ebItZpmqYy5DsS1B2lDS4EAoFQxRFKpE1pAzZ_Z706i8G8zsgwfUOGWYb9Hv0mNLBc"/>
+<div>
+<div class="text-label-md font-label-md text-on-surface font-semibold">Van C-04</div>
+<div class="text-label-md font-label-md text-secondary">License: 88나 9012</div>
+</div>
+</div>
+<button class="w-full bg-secondary-container text-on-surface font-label-md font-semibold py-3 rounded-lg hover:bg-secondary-fixed transition-colors flex justify-center items-center gap-2">
+                        Book Now
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface shadow-[0_-4px_20px_0_rgba(0,0,0,0.04)] docked full-width bottom-0 rounded-t-xl fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-3 md:hidden">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary rounded-full px-5 py-1.5 hover:opacity-80 transition-opacity scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home_pin</span>
+<span class="text-label-md font-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary px-5 py-1.5 hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">route</span>
+<span class="text-label-md font-label-md mt-1">My Trips</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary px-5 py-1.5 hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-label-md font-label-md mt-1">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary px-5 py-1.5 hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-md font-label-md mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

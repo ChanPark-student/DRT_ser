@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vehicle Tracking - DRT Connect</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#dde4ff",
+                    "tertiary-container": "#5e667d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#626567",
+                    "secondary-fixed-dim": "#c4c7c9",
+                    "surface-bright": "#f8f9ff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#eff4ff",
+                    "on-surface": "#0b1c30",
+                    "secondary-fixed": "#e0e3e5",
+                    "on-tertiary-fixed": "#131b2e",
+                    "inverse-primary": "#b7c4ff",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "surface-container-highest": "#d3e4fe",
+                    "outline": "#737688",
+                    "on-secondary-fixed": "#191c1e",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container": "#e5eeff",
+                    "background": "#f8f9ff",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b7c4ff",
+                    "outline-variant": "#c3c5d9",
+                    "on-primary-fixed": "#001452",
+                    "inverse-on-surface": "#eaf1ff",
+                    "secondary": "#5c5f61",
+                    "secondary-container": "#e0e3e5",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#dde1ff",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-secondary-fixed-variant": "#444749",
+                    "surface-variant": "#d3e4fe",
+                    "surface-tint": "#004ced",
+                    "surface": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#0052ff",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#434656",
+                    "inverse-surface": "#213145",
+                    "tertiary": "#464e64",
+                    "on-primary-fixed-variant": "#0038b6",
+                    "tertiary-fixed": "#dae2fd",
+                    "on-background": "#0b1c30",
+                    "on-primary-container": "#dfe3ff",
+                    "surface-container-high": "#dce9ff",
+                    "primary": "#003ec7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "20px",
+                    "unit": "4px",
+                    "stack-lg": "24px",
+                    "gutter": "16px",
+                    "stack-md": "16px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "data-mono": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                    "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                    "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                    "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                    "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                    "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                    "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .map-bg-pattern {
+            background-color: #f8f9ff;
+            background-image: radial-gradient(#d3e4fe 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* Custom map route line */
+        .route-path {
+            stroke-dasharray: 8 8;
+            animation: dash 20s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface h-screen w-screen overflow-hidden flex flex-col font-body-md antialiased">
+<!-- Map Canvas Area -->
+<main class="relative flex-1 w-full bg-surface-container-lowest overflow-hidden">
+<!-- Map Background Image Placeholder -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center opacity-80 mix-blend-multiply" data-alt="A clean, modern top-down view of a digital city map interface in a light mode aesthetic. The map features soft gray roads, subtle blue water features, and pale green parks on a pristine white background. The style is highly legible, minimalistic, and corporate, resembling a premium navigation application. Soft ambient lighting ensures high contrast without visual clutter." data-location="Seoul" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPrJTih7_3en-hILFYtTBl0-d5KRlvo0jJKde3JZeFhC3-ldCwv9orOOK7b418eg2w2MxWaGoLayzS_6aN4OuixBX2l_74cey1cDGz-DZyJjN4FHWg4dN6AZJJGSHh62qjXEKJTdNvbHsvv4UUGayUOZFBTrA5e13VdumKGlPr9ndsidzyQ_FEc4fPncoA5wgiVRyxT6NlRjiLsdDamy2uy4PPFBEoemuAk0a8FfqtyTEjulCztIL-5q67TrBa7amL_1s7DwuTGVM');">
+</div>
+<!-- Optional subtle pattern overlay for texture -->
+<div class="absolute inset-0 map-bg-pattern opacity-30"></div>
+<!-- Floating Back Action (Level 2 Elevation) -->
+<button class="absolute top-6 left-container-margin w-10 h-10 bg-surface rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors z-10">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<!-- Route SVG Overlay -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveaspectratio="none">
+<!-- Simulated curved path from vehicle to user -->
+<path class="route-path opacity-50" d="M 50%,30% Q 80%,50% 50%,70%" fill="none" stroke="#0052ff" stroke-width="4"></path>
+</svg>
+<!-- Vehicle Marker -->
+<div class="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center animate-[bounce_2s_ease-in-out_infinite] z-20">
+<div class="bg-surface text-primary px-3 py-1 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] text-[12px] font-bold tracking-wide mb-1 border border-primary/10 backdrop-blur-sm">
+                5 MIN
+            </div>
+<div class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg border-2 border-surface">
+<span class="material-symbols-outlined" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+</div>
+<!-- User Location Marker (Blue Dot) -->
+<div class="absolute top-[70%] left-[50%] -translate-x-1/2 -translate-y-1/2 z-10">
+<!-- Pulse ring -->
+<div class="absolute inset-0 w-4 h-4 bg-primary rounded-full animate-ping opacity-75"></div>
+<!-- Core dot -->
+<div class="relative w-4 h-4 bg-primary rounded-full border-2 border-surface shadow-[0_2px_4px_rgba(0,0,0,0.2)]"></div>
+</div>
+</main>
+<!-- Persistent Bottom Sheet (Non-modal Tracking Config) -->
+<section class="relative bg-surface w-full rounded-t-xl shadow-[0_-8px_24px_rgba(0,0,0,0.08)] z-50 px-container-margin pb-8 pt-3 flex flex-col border-t border-outline-variant/30">
+<!-- Drag Handle (Visual Indicator) -->
+<div class="w-10 h-1.5 bg-secondary-fixed-dim rounded-full mx-auto mb-5"></div>
+<!-- Status Header -->
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-headline-md font-headline-md text-primary">Vehicle arriving in 5 mins</h2>
+</div>
+<!-- Trip Progress Bar -->
+<div class="relative w-full h-2 bg-surface-container-high rounded-full mb-6 overflow-hidden">
+<div class="absolute left-0 top-0 h-full bg-primary rounded-full w-[75%] transition-all duration-1000 ease-out"></div>
+</div>
+<!-- Driver & Vehicle Bento Card -->
+<div class="bg-surface-container-low rounded-lg p-4 mb-6 flex items-center justify-between shadow-sm">
+<!-- Vehicle Info -->
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary border border-surface-variant">
+<span class="material-symbols-outlined text-2xl" data-icon="commute">commute</span>
+</div>
+<div>
+<!-- Transit Chip -->
+<div class="inline-flex items-center bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1">
+                        Shuttle
+                    </div>
+<div class="text-headline-sm font-headline-sm text-on-surface">12가 3456</div>
+</div>
+</div>
+<!-- Vertical Divider -->
+<div class="w-[1px] h-10 bg-outline-variant/50 mx-2"></div>
+<!-- Driver Info -->
+<div class="flex items-center gap-3">
+<div class="text-right">
+<div class="text-label-md font-label-md text-secondary">Driver</div>
+<div class="text-body-md font-body-md text-on-surface font-medium">Kim Min-su</div>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30 bg-surface-variant">
+<img alt="Driver Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a friendly, approachable Asian male transit driver in his 40s. He is wearing a clean, modern dark blue uniform shirt. The lighting is soft and flattering, with a bright, clean light-mode background. The mood conveys reliability, safety, and excellent customer service." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5i0HlqeZQHiKCwGrJtgkrqlLuwFEKHITcLP67wnQ7QXnDrCN7x4WwRN9wLiSpmPB3ks7UTARJAMvtAdtJ_y2ygJsF8lWguKGp_0pl8ImufsyFazYio2YG59_DqyAdEoDZYklu9aKOEco6ujKMtBtATHh85-APznvca_pHW7au7I3AhHsWyxSbmxODc1ac1cFq3CneE4kvfy-T6GN_M_up3Al--EDPBdOEpb2H8thiSPW3oyG66gD8j3Lbwe4ReZmPuLja2xAqJtk"/>
+</div>
+</div>
+</div>
+<!-- Actions Flexbox -->
+<div class="flex gap-gutter w-full">
+<!-- Call Driver (Secondary Action - Ghost Style as per guidelines) -->
+<button class="flex-[2] bg-surface-container text-on-surface py-3.5 rounded-lg flex items-center justify-center gap-2 font-label-md text-label-md hover:bg-surface-variant transition-colors border border-outline-variant/50">
+<span class="material-symbols-outlined text-xl" data-icon="call">call</span>
+                Call Driver
+            </button>
+<!-- Cancel Ride (Destructive Subtle Action) -->
+<button class="flex-1 text-error py-3.5 rounded-lg font-label-md text-label-md bg-error-container/30 hover:bg-error-container transition-colors">
+                Cancel
+            </button>
+</div>
+</section>
+</body></html>

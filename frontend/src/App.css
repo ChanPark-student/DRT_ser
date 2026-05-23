@@ -1,0 +1,8 @@
+/* App.css - minimal reset, all styling is inline in App.jsx */
+* { box-sizing: border-box; }
+input[type=range] { cursor: pointer; }
+select, input { outline: none; }
+select:focus, input:focus { border-color: #58a6ff !important; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #161b22; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cargo Information Input</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001452",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-surface-variant": "#434656",
+                        "on-surface": "#0b1c30",
+                        "on-secondary-fixed": "#191c1e",
+                        "primary": "#003ec7",
+                        "outline": "#737688",
+                        "primary-container": "#0052ff",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#5e667d",
+                        "surface-container-high": "#dce9ff",
+                        "surface-bright": "#f8f9ff",
+                        "secondary": "#5c5f61",
+                        "on-tertiary-fixed": "#131b2e",
+                        "surface-tint": "#004ced",
+                        "primary-fixed": "#dde1ff",
+                        "tertiary-fixed": "#dae2fd",
+                        "surface-container-low": "#eff4ff",
+                        "error": "#ba1a1a",
+                        "tertiary": "#464e64",
+                        "surface-dim": "#cbdbf5",
+                        "on-background": "#0b1c30",
+                        "surface-container": "#e5eeff",
+                        "on-secondary-container": "#626567",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c3c5d9",
+                        "surface": "#f8f9ff",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "on-primary-fixed-variant": "#0038b6",
+                        "on-primary-container": "#dfe3ff",
+                        "on-tertiary-container": "#dde4ff",
+                        "inverse-primary": "#b7c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "secondary-container": "#e0e3e5",
+                        "on-secondary-fixed-variant": "#444749",
+                        "secondary-fixed": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "inverse-surface": "#213145",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "stack-sm": "8px",
+                        "container-margin": "20px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .route-line {
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: 24px;
+            width: 2px;
+            background-color: #c3c5d9; /* outline-variant */
+            z-index: 0;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row">
+<!-- Mobile Top App Bar (Task-focused: Back arrow instead of menu) -->
+<header class="md:hidden fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface shadow-sm text-primary">
+<button aria-label="Go back" class="flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-headline-sm font-headline-sm font-bold absolute left-1/2 -translate-x-1/2">Cargo Details</h1>
+<div class="w-8"></div> <!-- Spacer for centering -->
+</header>
+<!-- Desktop Navigation Drawer (Suppressed for Linear Task, but keeping a minimal back structure) -->
+<aside class="hidden md:flex flex-col h-full w-80 bg-surface-bright shadow-xl fixed left-0 py-6 px-4 z-40 rounded-r-xl">
+<div class="flex items-center gap-4 mb-stack-lg pl-2">
+<button aria-label="Go back" class="flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Cargo Details</h1>
+</div>
+<div class="px-2 mt-8">
+<p class="text-label-md font-label-md text-secondary mb-4 uppercase tracking-wider">Booking Flow</p>
+<ul class="space-y-2">
+<li class="flex items-center gap-3 text-secondary py-2">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="text-body-md font-body-md">Locations</span>
+</li>
+<li class="flex items-center gap-3 bg-primary-container text-on-primary-container font-semibold rounded-lg py-2 px-3 -mx-3">
+<span class="material-symbols-outlined" data-icon="local_shipping" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="text-body-md font-body-md">Cargo Details</span>
+</li>
+<li class="flex items-center gap-3 text-secondary py-2 opacity-50">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="text-body-md font-body-md">Schedule</span>
+</li>
+</ul>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 w-full max-w-2xl mx-auto pt-20 md:pt-12 px-container-margin pb-32 md:pb-12 md:ml-80">
+<div class="flex flex-col gap-stack-lg">
+<!-- Route Details Card (Level 1 Elevation) -->
+<section class="bg-surface-container-lowest rounded-xl p-4 shadow-[0_4px_20px_0_rgba(0,0,0,0.04)] relative">
+<div class="route-line"></div>
+<div class="flex flex-col gap-stack-md relative z-10">
+<!-- Pickup -->
+<div class="flex items-start gap-4 bg-surface-container-lowest">
+<div class="mt-1 w-6 h-6 rounded-full bg-surface flex items-center justify-center border-2 border-primary shrink-0 z-10">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex-1">
+<p class="text-label-md font-label-md text-secondary mb-1">Pickup Location</p>
+<p class="text-body-md font-body-md text-on-surface font-medium">124 Industrial Pkwy, Unit A</p>
+</div>
+</div>
+<!-- Dropoff -->
+<div class="flex items-start gap-4 bg-surface-container-lowest">
+<div class="mt-1 w-6 h-6 rounded-full bg-surface flex items-center justify-center border-2 border-outline-variant shrink-0 z-10">
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="location_on">location_on</span>
+</div>
+<div class="flex-1">
+<p class="text-label-md font-label-md text-secondary mb-1">Drop-off Location</p>
+<p class="text-body-md font-body-md text-on-surface font-medium">890 Logistics Hub Blvd</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Form Details -->
+<form class="flex flex-col gap-stack-lg">
+<!-- Cargo Type Chips -->
+<section>
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-stack-sm">Cargo Type</h2>
+<div class="flex flex-wrap gap-2">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="cargoType" type="radio" value="box"/>
+<div class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant text-label-md font-label-md peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:border-primary-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="inventory_2">inventory_2</span>
+                                Box
+                            </div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="cargoType" type="radio" value="furniture"/>
+<div class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant text-label-md font-label-md peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:border-primary-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="chair">chair</span>
+                                Furniture
+                            </div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="cargoType" type="radio" value="electronic"/>
+<div class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant text-label-md font-label-md peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:border-primary-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="desktop_windows">desktop_windows</span>
+                                Electronic
+                            </div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="cargoType" type="radio" value="other"/>
+<div class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant text-label-md font-label-md peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:border-primary-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+                                Other
+                            </div>
+</label>
+</div>
+</section>
+<!-- Size / Weight Selector -->
+<section>
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-stack-sm">Size / Weight Estimate</h2>
+<div class="grid grid-cols-3 gap-3">
+<label class="cursor-pointer">
+<input class="peer sr-only" name="sizeWeight" type="radio" value="small"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl border border-outline-variant bg-surface-container-lowest text-center peer-checked:border-primary peer-checked:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-tertiary mb-2 text-[24px]" data-icon="package_2">package_2</span>
+<span class="text-label-md font-label-md text-on-surface font-semibold">Small</span>
+<span class="text-[12px] text-secondary mt-1">&lt; 20 kg</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="sizeWeight" type="radio" value="medium"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl border border-outline-variant bg-surface-container-lowest text-center peer-checked:border-primary peer-checked:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-tertiary mb-2 text-[32px]" data-icon="package">package</span>
+<span class="text-label-md font-label-md text-on-surface font-semibold">Medium</span>
+<span class="text-[12px] text-secondary mt-1">20-50 kg</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="sizeWeight" type="radio" value="large"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl border border-outline-variant bg-surface-container-lowest text-center peer-checked:border-primary peer-checked:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-tertiary mb-2 text-[40px]" data-icon="deployed_code">deployed_code</span>
+<span class="text-label-md font-label-md text-on-surface font-semibold">Large</span>
+<span class="text-[12px] text-secondary mt-1">&gt; 50 kg</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Special Instructions -->
+<section>
+<h2 class="text-headline-sm font-headline-sm text-on-surface mb-stack-sm">Special Handling</h2>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest cursor-pointer hover:bg-surface-container-low transition-colors">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="material-symbols-outlined text-secondary" data-icon="broken_image">broken_image</span>
+<span class="text-body-md font-body-md text-on-surface flex-1">Fragile - Handle with care</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest cursor-pointer hover:bg-surface-container-low transition-colors">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="material-symbols-outlined text-secondary" data-icon="weight">weight</span>
+<span class="text-body-md font-body-md text-on-surface flex-1">Heavy - Requires lift gate</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest cursor-pointer hover:bg-surface-container-low transition-colors">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="material-symbols-outlined text-secondary" data-icon="ac_unit">ac_unit</span>
+<span class="text-body-md font-body-md text-on-surface flex-1">Temperature Sensitive</span>
+</label>
+</div>
+</section>
+<!-- Notes Input -->
+<section>
+<label class="block text-headline-sm font-headline-sm text-on-surface mb-stack-sm" for="cargoNotes">Additional Notes (Optional)</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-body-md font-body-md text-on-surface p-3" id="cargoNotes" placeholder="Enter any specific instructions for the driver..." rows="3"></textarea>
+</section>
+</form>
+</div>
+</main>
+<!-- Bottom Action Bar (Mobile Sticky, Desktop flow) -->
+<div class="fixed bottom-0 left-0 w-full md:relative md:w-auto md:max-w-2xl md:mx-auto md:bg-transparent bg-surface shadow-[0_-4px_20px_0_rgba(0,0,0,0.04)] md:shadow-none p-4 pb-8 md:pb-12 z-40 md:pl-80">
+<button class="w-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-label-md font-label-md font-bold py-4 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+            Next Step
+            <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</body></html>
