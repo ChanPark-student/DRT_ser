@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Menu, Bell, Search, Mic, Bus as BusIcon, Home, Briefcase, MapPin, Route as RouteIcon, User } from 'lucide-react';
 import { evaluateFeasibility } from '../feasibility';
@@ -13,6 +13,60 @@ const MOCK_VEHICLE = {
   loc: { lat: 35.195, lon: 126.815, name: '현재 차량 위치' },
   maxVolume: 500, maxWeight: 100,
   loadVolume: 50, loadWeight: 20,
+}
+
+function getStopIcon(emoji, color) {
+  return L.divIcon({
+    className: 'custom-pin-stop',
+    html: `<div style="width: 32px; height: 32px; background: white; border: 2px solid ${color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${emoji}</div>`,
+    iconSize: [32, 32], iconAnchor: [16, 16]
+  });
+}
+
+function MapController({ pickup, dropoff, routeCoords }) {
+  const map = useMap();
+  useEffect(() => {
+    const points = [[MY_LOCATION.lat, MY_LOCATION.lon]];
+    
+    if (routeCoords && routeCoords.length > 0) {
+      routeCoords.forEach(pt => points.push(pt));
+    } else {
+      if (pickup) points.push([pickup.lat, pickup.lon]);
+      if (dropoff) points.push([dropoff.lat, dropoff.lon]);
+    }
+    
+    if (points.length > 1) {
+      map.fitBounds(points, { padding: [40, 40], maxZoom: 15 });
+    } else {
+      map.setView([MOCK_VEHICLE.loc.lat, MOCK_VEHICLE.loc.lon], 13);
+    }
+  }, [pickup, dropoff, routeCoords, map]);
+  return null;
+}
+
+const MY_LOCATION = { lat: 35.138, lon: 126.791, name: '내 위치' };
+
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+function getMyLocationIcon() {
+  return L.divIcon({
+    className: 'custom-pin-me',
+    html: `<div style="width: 24px; height: 24px; background: #e54d2e; border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); position: relative;">
+      <div style="width: 24px; height: 24px; background: #e54d2e; border-radius: 50%; position: absolute; animation: pulse-ring 1.5s infinite; opacity: 0.4;"></div>
+      <span style="color: white; font-size: 11px; font-weight: 800;">내</span>
+    </div>`,
+    iconSize: [24, 24], iconAnchor: [12, 12]
+  });
 }
 
 function getVehicleIcon() {
@@ -51,7 +105,7 @@ function SearchableInput({ placeholder, icon: Icon, iconColor, stops, value, onC
         onChange={e => { setQuery(e.target.value); setShow(true); }}
         className="flex-1 bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface outline-none w-full py-1"
       />
-      {show && (
+      {show && query.trim() !== "" && (
         <ul className="absolute top-full left-8 right-0 mt-1 max-h-48 overflow-y-auto bg-surface border border-surface-variant rounded-lg shadow-lg z-50">
           {filtered.length > 0 ? filtered.map(s => (
             <li key={s.id} className="px-3 py-2 hover:bg-surface-container-low cursor-pointer text-body-sm" onClick={() => { onChange(s); setQuery(s.name); setShow(false); }}>
@@ -71,6 +125,7 @@ export default function PassengerHome() {
   const [stops, setStops] = useState([]);
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
+  const [routeCoords, setRouteCoords] = useState([]);
   const [modalResult, setModalResult] = useState(null);
 
   useEffect(() => {
@@ -79,10 +134,65 @@ export default function PassengerHome() {
         const res = await fetch('http://localhost:8000/api/stops?limit=100000');
         const data = await res.json();
         setStops(data);
+        window.debug_stops_count = data.length;
+        
+        // 초기 로딩 시 가장 가까운 정류장 설정
+        if (data.length > 0) {
+          let closest = data[0];
+          let minDist = getDistance(MY_LOCATION.lat, MY_LOCATION.lon, closest.lat, closest.lon);
+          for (let i = 1; i < data.length; i++) {
+            const dist = getDistance(MY_LOCATION.lat, MY_LOCATION.lon, data[i].lat, data[i].lon);
+            if (dist < minDist) {
+              minDist = dist;
+              closest = data[i];
+            }
+          }
+          setPickup(closest);
+        }
       } catch (e) { console.error(e) }
     }
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (!pickup || !dropoff) {
+      setRouteCoords([]);
+      return;
+    }
+    async function fetchRoute() {
+      try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${pickup.lon},${pickup.lat};${dropoff.lon},${dropoff.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.routes && data.routes.length > 0) {
+          const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          setRouteCoords(coords);
+          window.debug_route_length = coords.length;
+        } else {
+          setRouteCoords([[pickup.lat, pickup.lon], [dropoff.lat, dropoff.lon]]);
+        }
+      } catch (e) {
+        console.error(e);
+        setRouteCoords([[pickup.lat, pickup.lon], [dropoff.lat, dropoff.lon]]);
+      }
+    }
+    fetchRoute();
+  }, [pickup, dropoff]);
+
+  const resetToClosest = () => {
+    if (stops.length > 0) {
+      let closest = stops[0];
+      let minDist = getDistance(MY_LOCATION.lat, MY_LOCATION.lon, closest.lat, closest.lon);
+      for (let i = 1; i < stops.length; i++) {
+        const dist = getDistance(MY_LOCATION.lat, MY_LOCATION.lon, stops[i].lat, stops[i].lon);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = stops[i];
+        }
+      }
+      setPickup(closest);
+    }
+  };
 
   const handleCall = () => {
     if (!pickup || !dropoff) return;
@@ -98,13 +208,21 @@ export default function PassengerHome() {
       <div className="absolute inset-0 z-0">
         <MapContainer center={[35.19, 126.81]} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false} attributionControl={false}>
           <TileLayer url="https://xdworld.vworld.kr/2d/Base/service/{z}/{x}/{y}.png" />
-          <Marker position={[MOCK_VEHICLE.loc.lat, MOCK_VEHICLE.loc.lon]} icon={getVehicleIcon()} />
+          <Marker position={[MY_LOCATION.lat, MY_LOCATION.lon]} icon={getMyLocationIcon()} />
+          {pickup && (
+            <Marker position={[pickup.lat, pickup.lon]} icon={getStopIcon('🧍', '#3fb950')} />
+          )}
+          {dropoff && (
+            <Marker position={[dropoff.lat, dropoff.lon]} icon={getStopIcon('🏁', '#d32f2f')} />
+          )}
+          {pickup && dropoff && routeCoords.length > 0 && (
+            <Polyline 
+              positions={routeCoords} 
+              pathOptions={{ color: '#0052FF', weight: 6, opacity: 0.8 }} 
+            />
+          )}
+          <MapController pickup={pickup} dropoff={dropoff} routeCoords={routeCoords} />
         </MapContainer>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center pointer-events-none">
-          <div className="absolute w-12 h-12 bg-primary rounded-full animate-pulse-ring"></div>
-          <div className="absolute w-12 h-12 bg-primary rounded-full animate-pulse-ring" style={{animationDelay: '1.25s'}}></div>
-          <div className="relative w-4 h-4 bg-primary border-2 border-surface-container-lowest rounded-full shadow-sm"></div>
-        </div>
       </div>
 
       <header className="absolute top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface shadow-sm text-primary">
@@ -124,6 +242,16 @@ export default function PassengerHome() {
              <div className="w-full h-[1px] bg-outline-variant/30 my-2"></div>
              <SearchableInput placeholder="도착 정류장을 검색하세요" icon={MapPin} iconColor="text-error" stops={stops} value={dropoff} onChange={setDropoff} />
           </div>
+          {stops.length > 0 && (
+            <div className="mt-2 text-right">
+              <button 
+                onClick={resetToClosest}
+                className="text-[11px] font-bold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer pointer-events-auto"
+                style={{ outline: 'none' }}>
+                📍 내 위치에서 가장 가까운 정류장 설정
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="px-container-margin flex flex-col gap-stack-md pointer-events-auto items-end pb-4">

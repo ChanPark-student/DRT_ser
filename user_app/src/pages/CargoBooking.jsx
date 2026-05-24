@@ -7,10 +7,10 @@ import { evaluateFeasibility } from '../feasibility';
 const DEFAULT_PASSENGER = { pickupTol: 10, dropoffTol: 10, directTime: 10, maxRide: 15 }
 const MOCK_VEHICLE = {
   id: 'V_DRT_01',
-  state: 'PASSENGER_ONLY',
+  state: 'EMPTY',
   loc: { lat: 35.195, lon: 126.815, name: '근처 차량' },
   maxVolume: 500, maxWeight: 100,
-  loadVolume: 50, loadWeight: 20, // 남은 무게: 80kg
+  loadVolume: 0, loadWeight: 0,
 }
 
 function SearchableInput({ placeholder, stops, value, onChange }) {
@@ -40,7 +40,7 @@ function SearchableInput({ placeholder, stops, value, onChange }) {
         onChange={e => { setQuery(e.target.value); setShow(true); }}
         className="w-full bg-surface-container-low border-none rounded py-1 px-2 text-body-md font-semibold text-on-surface outline-none"
       />
-      {show && (
+      {show && query.trim() !== "" && (
         <ul className="absolute top-full left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-surface border border-surface-variant rounded-lg shadow-lg z-50">
           {filtered.length > 0 ? filtered.map(s => (
             <li key={s.id} className="px-3 py-2 hover:bg-surface-container-low cursor-pointer text-body-sm font-normal" onClick={() => { onChange(s); setQuery(s.name); setShow(false); }}>
@@ -58,6 +58,7 @@ function SearchableInput({ placeholder, stops, value, onChange }) {
 export default function CargoBooking() {
   const navigate = useNavigate();
   const [nodes, setNodes] = useState([]);
+  const [priorityStops, setPriorityStops] = useState([]);
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
   const [vol, setVol] = useState(30);
@@ -67,9 +68,14 @@ export default function CargoBooking() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await fetch('http://localhost:8000/api/logistics_nodes?limit=500');
-        const data = await res.json();
-        setNodes(data);
+        const [nodesRes, priorityRes] = await Promise.all([
+          fetch('http://localhost:8000/api/logistics_nodes?limit=500'),
+          fetch('http://localhost:8000/api/stops?priority=true')
+        ]);
+        const nodesData = await nodesRes.json();
+        const priorityData = await priorityRes.json();
+        setNodes(nodesData);
+        setPriorityStops(priorityData);
       } catch (e) { console.error(e) }
     }
     loadData();
@@ -114,7 +120,7 @@ export default function CargoBooking() {
                 </div>
                 <div>
                   <p className="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider text-[11px] font-bold">도착지 검색</p>
-                  <SearchableInput placeholder="하차지 주소 검색" stops={nodes} value={dropoff} onChange={setDropoff} />
+                  <SearchableInput placeholder="하차지 주소 검색" stops={priorityStops} value={dropoff} onChange={setDropoff} />
                 </div>
               </div>
             </div>
@@ -191,7 +197,7 @@ export default function CargoBooking() {
             {modalResult.result === 'D' ? (
               <button className="w-full bg-primary text-on-primary py-3 rounded-xl font-bold shadow-sm" onClick={() => setModalResult(null)}>확인</button>
             ) : (
-              <button className="w-full bg-primary text-on-primary py-3 rounded-xl font-bold shadow-sm" onClick={() => navigate('/tracking')}>화물 추적하기</button>
+              <button className="w-full bg-primary text-on-primary py-3 rounded-xl font-bold shadow-sm" onClick={() => navigate('/tracking', { state: { pickup, dropoff } })}>화물 추적하기</button>
             )}
           </div>
         </div>

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, Boolean
 from database import Base
 
 class BusStop(Base):
@@ -10,6 +10,7 @@ class BusStop(Base):
     dong = Column(String)
     lat = Column(Float, nullable=True)
     lon = Column(Float, nullable=True)
+    is_priority = Column(Boolean, default=False)
 
 class LogisticsNode(Base):
     __tablename__ = "logistics_nodes"

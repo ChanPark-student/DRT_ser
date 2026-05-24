@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { evaluateFeasibility } from './feasibility'
-import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import './App.css'
@@ -53,16 +53,36 @@ function getIcon(emoji, color, label) {
   });
 }
 
-function DRTMap({ vehicle, passenger, logistics, result }) {
+function MapController({ vehicle, passenger, logistics, routeACoords }) {
+  const map = useMap();
+  useEffect(() => {
+    const points = [
+      [vehicle.loc.lat, vehicle.loc.lon],
+      [passenger.pickupStop.lat, passenger.pickupStop.lon],
+      [passenger.dropoffStop.lat, passenger.dropoffStop.lon],
+      [logistics.pickupLoc.lat, logistics.pickupLoc.lon],
+      [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon]
+    ];
+    if (routeACoords && routeACoords.length > 0) {
+      routeACoords.forEach(pt => points.push(pt));
+    }
+    if (points.length > 1) {
+      map.fitBounds(points, { padding: [40, 40], maxZoom: 15 });
+    }
+  }, [vehicle.loc, passenger.pickupStop, passenger.dropoffStop, logistics.pickupLoc, logistics.dropoffLoc, routeACoords, map]);
+  return null;
+}
+
+function DRTMap({ vehicle, passenger, logistics, result, routeACoords, routeBCoords, routeCCoords }) {
   const centerLat = (vehicle.loc.lat + passenger.pickupStop.lat + passenger.dropoffStop.lat + logistics.pickupLoc.lat + logistics.dropoffLoc.lat) / 5;
   const centerLon = (vehicle.loc.lon + passenger.pickupStop.lon + passenger.dropoffStop.lon + logistics.pickupLoc.lon + logistics.dropoffLoc.lon) / 5;
 
   const selectedKey = result?.selectedKey;
   
   const routes = {
-    A: [[vehicle.loc.lat, vehicle.loc.lon], [logistics.pickupLoc.lat, logistics.pickupLoc.lon], [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon], [passenger.dropoffStop.lat, passenger.dropoffStop.lon]],
-    B: [[vehicle.loc.lat, vehicle.loc.lon], [logistics.pickupLoc.lat, logistics.pickupLoc.lon], [passenger.dropoffStop.lat, passenger.dropoffStop.lon], [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon]],
-    C: [[vehicle.loc.lat, vehicle.loc.lon], [passenger.dropoffStop.lat, passenger.dropoffStop.lon], [logistics.pickupLoc.lat, logistics.pickupLoc.lon], [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon]],
+    A: routeACoords.length > 0 ? routeACoords : [[vehicle.loc.lat, vehicle.loc.lon], [logistics.pickupLoc.lat, logistics.pickupLoc.lon], [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon], [passenger.dropoffStop.lat, passenger.dropoffStop.lon]],
+    B: routeBCoords.length > 0 ? routeBCoords : [[vehicle.loc.lat, vehicle.loc.lon], [logistics.pickupLoc.lat, logistics.pickupLoc.lon], [passenger.dropoffStop.lat, passenger.dropoffStop.lon], [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon]],
+    C: routeCCoords.length > 0 ? routeCCoords : [[vehicle.loc.lat, vehicle.loc.lon], [passenger.dropoffStop.lat, passenger.dropoffStop.lon], [logistics.pickupLoc.lat, logistics.pickupLoc.lon], [logistics.dropoffLoc.lat, logistics.dropoffLoc.lon]],
   }
   const routeColors = { A: '#0052ff', B: '#f57c00', C: '#2196f3' }
 
@@ -86,6 +106,7 @@ function DRTMap({ vehicle, passenger, logistics, result }) {
         <Marker position={[passenger.dropoffStop.lat, passenger.dropoffStop.lon]} icon={getIcon('🏁', '#3fb950', '승객 하차')} />
         <Marker position={[logistics.pickupLoc.lat, logistics.pickupLoc.lon]} icon={getIcon('📦', '#f57c00', '물류 상차')} />
         <Marker position={[logistics.dropoffLoc.lat, logistics.dropoffLoc.lon]} icon={getIcon('📫', '#f57c00', '물류 하차')} />
+        <MapController vehicle={vehicle} passenger={passenger} logistics={logistics} routeACoords={routes[selectedKey || 'A']} />
       </MapContainer>
 
       <div style={{ position: 'absolute', right: 16, top: 16, background: 'rgba(255,255,255,0.95)', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)', zIndex: 1000, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
@@ -210,24 +231,32 @@ export default function App() {
   const [autoRun, setAutoRun] = useState(true)
   const [stops, setStops] = useState([])
   const [nodes, setNodes] = useState([])
+  const [priorityStops, setPriorityStops] = useState([])
+  const [routeACoords, setRouteACoords] = useState([])
+  const [routeBCoords, setRouteBCoords] = useState([])
+  const [routeCCoords, setRouteCCoords] = useState([])
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [stopsRes, nodesRes] = await Promise.all([
-          fetch('http://localhost:8000/api/stops?limit=50'),
-          fetch('http://localhost:8000/api/logistics_nodes?limit=50')
+        const [stopsRes, nodesRes, priorityRes] = await Promise.all([
+          fetch('http://localhost:8000/api/stops?limit=100000'),
+          fetch('http://localhost:8000/api/logistics_nodes?limit=50'),
+          fetch('http://localhost:8000/api/stops?priority=true')
         ])
         const stopsData = await stopsRes.json()
         const nodesData = await nodesRes.json()
+        const priorityData = await priorityRes.json()
         setStops(stopsData)
         setNodes(nodesData)
+        setPriorityStops(priorityData)
+        window.debug_stops_count = stopsData.length
         
         if (stopsData.length >= 3 && nodesData.length >= 1) {
            const pStop1 = stopsData[0]
            const pStop2 = stopsData[1]
            const lNode1 = nodesData[0]
-           const lNode2 = stopsData[2]
+           const lNode2 = priorityData.length > 0 ? priorityData[0] : stopsData[2]
            
            setState(prev => ({
              ...prev,
@@ -249,6 +278,44 @@ export default function App() {
     }
     loadData()
   }, [])
+
+  useEffect(() => {
+    const v = s.vehicle.loc;
+    const p_drop = s.passenger.dropoffStop;
+    const l_pick = s.logistics.pickupLoc;
+    const l_drop = s.logistics.dropoffLoc;
+    
+    if (!v || !p_drop || !l_pick || !l_drop) return;
+    
+    async function fetchRoutes() {
+      try {
+        const urlA = `https://router.project-osrm.org/route/v1/driving/${v.lon},${v.lat};${l_pick.lon},${l_pick.lat};${l_drop.lon},${l_drop.lat};${p_drop.lon},${p_drop.lat}?overview=full&geometries=geojson`;
+        const urlB = `https://router.project-osrm.org/route/v1/driving/${v.lon},${v.lat};${l_pick.lon},${l_pick.lat};${p_drop.lon},${p_drop.lat};${l_drop.lon},${l_drop.lat}?overview=full&geometries=geojson`;
+        const urlC = `https://router.project-osrm.org/route/v1/driving/${v.lon},${v.lat};${p_drop.lon},${p_drop.lat};${l_pick.lon},${l_pick.lat};${l_drop.lon},${l_drop.lat}?overview=full&geometries=geojson`;
+
+        const [resA, resB, resC] = await Promise.all([
+          fetch(urlA).then(r => r.json()),
+          fetch(urlB).then(r => r.json()),
+          fetch(urlC).then(r => r.json())
+        ]);
+
+        if (resA.routes && resA.routes.length > 0) {
+          const coords = resA.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          setRouteACoords(coords);
+          window.debug_dashboard_route_a_length = coords.length;
+        }
+        if (resB.routes && resB.routes.length > 0) {
+          setRouteBCoords(resB.routes[0].geometry.coordinates.map(c => [c[1], c[0]]));
+        }
+        if (resC.routes && resC.routes.length > 0) {
+          setRouteCCoords(resC.routes[0].geometry.coordinates.map(c => [c[1], c[0]]));
+        }
+      } catch (e) {
+        console.error("Failed to fetch OSRM dashboard routes:", e);
+      }
+    }
+    fetchRoutes();
+  }, [state.vehicle.loc, state.passenger.dropoffStop, state.logistics.pickupLoc, state.logistics.dropoffLoc]);
 
   const run = useCallback(() => {
     const r = evaluateFeasibility(state.vehicle, state.passenger, state.logistics)
@@ -380,15 +447,15 @@ export default function App() {
               <select 
                 value={s.logistics.dropoffLoc.name} 
                 onChange={e => {
-                  const n = nodes.find(x => x.name === e.target.value) || stops.find(x => x.name === e.target.value)
+                  const n = nodes.find(x => x.name === e.target.value) || priorityStops.find(x => x.name === e.target.value)
                   if(n) setV('logistics.dropoffLoc', { lat: n.lat, lon: n.lon, name: n.name })
                 }}
                 style={selectStyle}>
                 <optgroup label="물류 거점">
                   {nodes.map(n => <option key={`ldn_${n.id}`} value={n.name}>{n.name}</option>)}
                 </optgroup>
-                <optgroup label="정류장">
-                  {stops.map(st => <option key={`lds_${st.id}`} value={st.name}>{st.name}</option>)}
+                <optgroup label="우선순위 정류장">
+                  {priorityStops.map(st => <option key={`lds_${st.id}`} value={st.name}>{st.name}</option>)}
                 </optgroup>
               </select>
             </div>
@@ -411,7 +478,15 @@ export default function App() {
         <div style={{ overflowY:'auto', display:'flex', flexDirection:'column', gap:24, paddingRight: 8 }}>
 
           {/* 지도 */}
-          <DRTMap vehicle={s.vehicle} passenger={s.passenger} logistics={s.logistics} result={result} />
+          <DRTMap 
+            vehicle={s.vehicle} 
+            passenger={s.passenger} 
+            logistics={s.logistics} 
+            result={result} 
+            routeACoords={routeACoords}
+            routeBCoords={routeBCoords}
+            routeCCoords={routeCCoords}
+          />
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}>
             {/* 판정 결과 */}

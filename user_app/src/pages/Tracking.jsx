@@ -1,24 +1,82 @@
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Phone, FileText, Package } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
+
+function getStopIcon(emoji, color) {
+  return L.divIcon({
+    className: 'custom-pin-stop',
+    html: `<div style="width: 32px; height: 32px; background: white; border: 2px solid ${color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${emoji}</div>`,
+    iconSize: [32, 32], iconAnchor: [16, 16]
+  });
+}
+
+function MapController({ pickup, dropoff, routeCoords, vehicleLoc }) {
+  const map = useMap();
+  useEffect(() => {
+    const points = [
+      [vehicleLoc.lat, vehicleLoc.lon],
+      [pickup.lat, pickup.lon],
+      [dropoff.lat, dropoff.lon]
+    ];
+    if (routeCoords && routeCoords.length > 0) {
+      routeCoords.forEach(pt => points.push(pt));
+    }
+    if (points.length > 1) {
+      map.fitBounds(points, { padding: [40, 40], maxZoom: 15 });
+    }
+  }, [pickup, dropoff, routeCoords, vehicleLoc, map]);
+  return null;
+}
 
 export default function Tracking() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { pickup, dropoff } = location.state || {};
+
+  const defaultPickup = { lat: 35.138, lon: 126.791, name: '광주송정역' };
+  const defaultDropoff = { lat: 35.171, lon: 126.809, name: '월곡시장' };
+
+  const activePickup = pickup || defaultPickup;
+  const activeDropoff = dropoff || defaultDropoff;
+
+  const [routeCoords, setRouteCoords] = useState([]);
+
+  // Simulate vehicle position at 40% of the trip (on OSRM route if loaded, otherwise linear)
+  const vehicleLoc = routeCoords && routeCoords.length > 0
+    ? { lat: routeCoords[Math.floor(routeCoords.length * 0.4)][0], lon: routeCoords[Math.floor(routeCoords.length * 0.4)][1] }
+    : {
+        lat: activePickup.lat + (activeDropoff.lat - activePickup.lat) * 0.4,
+        lon: activePickup.lon + (activeDropoff.lon - activePickup.lon) * 0.4
+      };
+
+  useEffect(() => {
+    async function fetchRoute() {
+      try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${activePickup.lon},${activePickup.lat};${activeDropoff.lon},${activeDropoff.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.routes && data.routes.length > 0) {
+          const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          setRouteCoords(coords);
+          window.debug_tracking_route_length = coords.length;
+        } else {
+          setRouteCoords([[activePickup.lat, activePickup.lon], [activeDropoff.lat, activeDropoff.lon]]);
+        }
+      } catch (e) {
+        console.error(e);
+        setRouteCoords([[activePickup.lat, activePickup.lon], [activeDropoff.lat, activeDropoff.lon]]);
+      }
+    }
+    fetchRoute();
+  }, [activePickup, activeDropoff]);
 
   const getVehicleIcon = () => {
     return L.divIcon({
       className: 'custom-pin',
       html: `<div style="width: 36px; height: 36px; background: #0052FF; border: 3px solid white; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,82,255,0.4); display:flex; align-items:center; justify-content:center; color:white;"><span class="material-symbols-outlined" style="font-size: 20px;">local_shipping</span></div>`,
       iconSize: [36, 36], iconAnchor: [18, 18]
-    });
-  };
-
-  const getMarkerIcon = (color) => {
-    return L.divIcon({
-      className: 'custom-pin',
-      html: `<div style="width: 16px; height: 16px; background: ${color}; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>`,
-      iconSize: [16, 16], iconAnchor: [8, 8]
     });
   };
 
@@ -37,12 +95,15 @@ export default function Tracking() {
       <main className="flex-1 flex flex-col pt-16 h-full relative">
         {/* Map Area */}
         <div className="flex-1 relative bg-surface-container-low overflow-hidden">
-          <MapContainer center={[35.195, 126.815]} zoom={14} style={{ width: '100%', height: '100%' }} zoomControl={false} attributionControl={false}>
+          <MapContainer center={[vehicleLoc.lat, vehicleLoc.lon]} zoom={14} style={{ width: '100%', height: '100%' }} zoomControl={false} attributionControl={false}>
             <TileLayer url="https://xdworld.vworld.kr/2d/Base/service/{z}/{x}/{y}.png" />
-            <Marker position={[35.195, 126.815]} icon={getVehicleIcon()} />
-            <Marker position={[35.18, 126.80]} icon={getMarkerIcon('#FFFFFF')} />
-            <Marker position={[35.21, 126.83]} icon={getMarkerIcon('#0052FF')} />
-            <Polyline positions={[[35.18, 126.80], [35.195, 126.815], [35.21, 126.83]]} pathOptions={{ color: '#0052FF', weight: 4, dashArray: '8,8' }} />
+            <Marker position={[vehicleLoc.lat, vehicleLoc.lon]} icon={getVehicleIcon()} />
+            <Marker position={[activePickup.lat, activePickup.lon]} icon={getStopIcon('📦', '#3fb950')} />
+            <Marker position={[activeDropoff.lat, activeDropoff.lon]} icon={getStopIcon('🏁', '#d32f2f')} />
+            {routeCoords.length > 0 && (
+              <Polyline positions={routeCoords} pathOptions={{ color: '#0052FF', weight: 6, opacity: 0.8 }} />
+            )}
+            <MapController pickup={activePickup} dropoff={activeDropoff} routeCoords={routeCoords} vehicleLoc={vehicleLoc} />
           </MapContainer>
         </div>
 

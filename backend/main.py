@@ -19,8 +19,11 @@ app.add_middleware(
 )
 
 @app.get("/api/stops")
-def get_stops(db: Session = Depends(get_db), limit: int = 100000):
-    return db.query(models.BusStop).filter(models.BusStop.address.like('%광산구%')).limit(limit).all()
+def get_stops(db: Session = Depends(get_db), limit: int = 100000, priority: bool = None):
+    query = db.query(models.BusStop)
+    if priority is not None:
+        query = query.filter(models.BusStop.is_priority == priority)
+    return query.limit(limit).all()
 
 @app.get("/api/logistics_nodes")
 def get_logistics_nodes(db: Session = Depends(get_db), limit: int = 100):
